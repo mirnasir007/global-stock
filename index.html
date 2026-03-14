@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PFF Premium Global Stock</title>
+  <link rel="icon" type="image/png" href="logo.png">
   <style>
     :root {
       --primary: #2563eb;
@@ -121,11 +122,14 @@
   </div>
 
   <script>
+    // ⚠️ নিচে আপনার আসল ক্লাউডফ্লেয়ার লিংকটি বসিয়ে দিন এবং শেষে অবশ্যই একটি স্ল্যাশ (/) রাখবেন
+    const PROXY_URL = "https://pff-proxy.apnar-nam.workers.dev/"; 
+
     const AUTH_TOKEN = "Nasir:Bc1eAzlFgxiej0LdckCqdw==";
     
-    // Proxy URLs to bypass GitHub's HTTPS block
-const SEARCH_API_URL = "https://pff-proxy.apnar-nam.workers.dev/?url=http://103.87.213.56/PFF/api/PostProductListByPageSize";
-const STOCK_API_URL = "https://pff-proxy.apnar-nam.workers.dev/?url=http://103.87.213.56/PFF/api/GetProdctStockByBarcodeWithZeroStock/10001";
+    // Cloudflare Path-based Proxy URLs (কোনো ?url= ছাড়া)
+    const SEARCH_API_URL = PROXY_URL + "http://103.87.213.56/PFF/api/PostProductListByPageSize";
+    const STOCK_API_BASE = PROXY_URL + "http://103.87.213.56/PFF/api/GetProdctStockByBarcodeWithZeroStock/10001";
 
     const stores = [
       {code: "100010001", name: "PFF PREMIUM_WH"},
@@ -168,9 +172,9 @@ const STOCK_API_URL = "https://pff-proxy.apnar-nam.workers.dev/?url=http://103.8
         const response = await fetch(SEARCH_API_URL, {
           method: 'POST',
           headers: {
-            "accept": "application/json, text/plain, */*",
+            "accept": "application/json",
             "authorization": AUTH_TOKEN,
-            "content-type": "application/json;charset=UTF-8"
+            "content-type": "application/json"
           },
           body: JSON.stringify(payload)
         });
@@ -260,7 +264,8 @@ const STOCK_API_URL = "https://pff-proxy.apnar-nam.workers.dev/?url=http://103.8
 
       for (let i = 0; i < stores.length; i++) {
         try {
-          const fetchUrl = `${STOCK_API_URL}/${stores[i].code}/${encodeURIComponent(barcode)}?withzeros=N`;
+          // Cloudflare Path-based Proxy-এর জন্য পারফেক্ট লিংক তৈরি করা হলো
+          const fetchUrl = `${STOCK_API_BASE}/${stores[i].code}/${encodeURIComponent(barcode)}?withzeros=N`;
           
           const response = await fetch(fetchUrl, {
             method: 'GET',
