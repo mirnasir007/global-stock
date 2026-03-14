@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PFF Premium Global Stock</title>
-  <link rel="icon" type="image/png" href="logo.png">
   <style>
     :root {
       --primary: #2563eb;
@@ -123,8 +122,10 @@
 
   <script>
     const AUTH_TOKEN = "Nasir:Bc1eAzlFgxiej0LdckCqdw==";
-const SEARCH_API_URL = "https://corsproxy.io/?http://103.87.213.56/PFF/api/PostProductListByPageSize";
-const STOCK_API_URL = "https://corsproxy.io/?http://103.87.213.56/PFF/api/GetProdctStockByBarcodeWithZeroStock/10001";
+    
+    // Proxy URLs to bypass GitHub's HTTPS block
+    const SEARCH_API_URL = "https://corsproxy.io/?http://103.87.213.56/PFF/api/PostProductListByPageSize";
+    const STOCK_API_URL = "https://corsproxy.io/?http://103.87.213.56/PFF/api/GetProdctStockByBarcodeWithZeroStock/10001";
 
     const stores = [
       {code: "100010001", name: "PFF PREMIUM_WH"},
