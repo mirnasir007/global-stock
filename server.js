@@ -75,6 +75,7 @@ app.get('/api/stock/:storeCode/:barcode', async (req, res) => {
 });
 
 // Server Start korar code
+module.exports = app;
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`PFF Backend is running on port ${PORT}`);
