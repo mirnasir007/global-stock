@@ -112,7 +112,12 @@
           </tbody>
           <tfoot>
             <tr class="total-row">
-              <td style="text-align: right;">TOTAL GLOBAL STOCK :</td>
+              <td style="text-align: right; position: relative;">
+                <span style="position: absolute; left: 16px; color: var(--text-muted); font-size: 14px;">
+                  Last Purchase: <span id="lastPurQty" style="color: var(--primary); font-size: 16px;">0</span> pcs
+                </span>
+                TOTAL GLOBAL STOCK :
+              </td>
               <td class="total-qty" id="totalStockQty" style="text-align: center;">0</td>
             </tr>
           </tfoot>
@@ -227,6 +232,7 @@
       document.getElementById('lblCPU').innerText = "...";
       document.getElementById('lblMRP').innerText = "...";
       document.getElementById('totalStockQty').innerText = "0";
+      document.getElementById('lastPurQty').innerText = "...";
 
       const tbody = document.getElementById('stockTableBody');
       tbody.innerHTML = '';
@@ -240,10 +246,25 @@
         tbody.appendChild(tr);
       });
 
-      document.getElementById('resultCard').style.display = 'block';
+     document.getElementById('resultCard').style.display = 'block';
 
       let totalQty = 0;
       let infoFound = false;
+
+      // Fetch Last Purchase QTY
+      try {
+        const lpResponse = await fetch(`${BACKEND_URL}/api/last-purchase/${encodeURIComponent(barcode)}`);
+        if (lpResponse.ok) {
+          const lpData = await lpResponse.json();
+          if (lpData && lpData.length > 0) {
+            document.getElementById('lastPurQty').innerText = lpData[0].LAST_PUR_QTY || 0;
+          } else {
+            document.getElementById('lastPurQty').innerText = "0";
+          }
+        }
+      } catch (err) {
+        document.getElementById('lastPurQty').innerText = "Error";
+      }
 
       for (let i = 0; i < stores.length; i++) {
         try {
