@@ -74,6 +74,31 @@ app.get('/api/stock/:storeCode/:barcode', async (req, res) => {
     }
 });
 
+// 3. Last Purchase QTY API
+app.get('/api/last-purchase/:barcode', async (req, res) => {
+    try {
+        const { barcode } = req.params;
+        const fetchUrl = `http://103.87.213.56/PFF/api/GetProductForPurchaseReceiveByProduct/10001/100010001/1001/${encodeURIComponent(barcode)}/N/`;
+        
+        const response = await fetch(fetchUrl, {
+            method: 'GET',
+            headers: {
+                "accept": "application/json",
+                "authorization": AUTH_TOKEN
+            }
+        });
+
+        if (!response.ok) throw new Error("POS Server Error");
+
+        const responseText = await response.text();
+        const data = responseText ? JSON.parse(responseText) : [];
+        res.json(data);
+    } catch (error) {
+        console.error("Last Purchase Fetch Error:", error.message);
+        res.status(500).json({ success: false, message: "Error fetching last purchase" });
+    }
+});
+
 // Server Start korar code
 module.exports = app;
 const PORT = process.env.PORT || 3000;
