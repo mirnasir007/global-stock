@@ -78,21 +78,39 @@ app.get('/api/stock/:storeCode/:barcode', async (req, res) => {
 app.get('/api/last-purchase/:barcode', async (req, res) => {
     try {
         const { barcode } = req.params;
-        const fetchUrl = `http://103.87.213.56/PFF/api/GetProductForPurchaseReceiveByProduct/10001/100010001/1001/${encodeURIComponent(barcode)}/N/`;
         
-        const response = await fetch(fetchUrl, {
-            method: 'GET',
-            headers: {
-                "accept": "application/json",
-                "authorization": AUTH_TOKEN
+        // Apnar shob vendor ID gulo ekhane array akare rakhun
+        const vendorIds = ["1001", "1002", "1003", "1004"]; 
+        let foundData = null;
+
+        // Ekta ekta kore shob vendor ID diye loop chaliye check korbe
+        for (let i = 0; i < vendorIds.length; i++) {
+            const vendorId = vendorIds[i];
+            const fetchUrl = `http://103.87.213.56/PFF/api/GetProductForPurchaseReceiveByProduct/10001/100010001/${vendorId}/${encodeURIComponent(barcode)}/N/`;
+            
+            const response = await fetch(fetchUrl, {
+                method: 'GET',
+                headers: {
+                    "accept": "application/json",
+                    "authorization": AUTH_TOKEN
+                }
+            });
+
+            if (response.ok) {
+                const responseText = await response.text();
+                const data = responseText ? JSON.parse(responseText) : [];
+                
+                // Jodi data pawa jay ebang quantity thake, tahole loop theke ber hoye jabe
+                if (data && data.length > 0) {
+                    foundData = data;
+                    break; // Data peye gele onno vendor der ar check korbe na, time save hobe
+                }
             }
-        });
+        }
 
-        if (!response.ok) throw new Error("POS Server Error");
+        // Jodi kono vendor er kachei data pawa na jay, tahole khali array pathabe
+        res.json(foundData || []);
 
-        const responseText = await response.text();
-        const data = responseText ? JSON.parse(responseText) : [];
-        res.json(data);
     } catch (error) {
         console.error("Last Purchase Fetch Error:", error.message);
         res.status(500).json({ success: false, message: "Error fetching last purchase" });
