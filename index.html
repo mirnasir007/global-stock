@@ -2,78 +2,134 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>PFF Premium Global Stock</title>
   <link rel="icon" type="image/png" href="logo.png">
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --bg-color: #f8fafc;
-      --card-bg: #ffffff;
-      --text-main: #1e293b;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
+      --primary: #2563eb; --primary-hover: #1d4ed8; --bg-color: #f1f5f9; --card-bg: #ffffff;
+      --text-main: #0f172a; --text-muted: #64748b; --border-color: #cbd5e1;
+      --success: #059669; --danger: #e11d48; --warning: #d97706;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     }
+    
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-color); padding: 20px 15px; margin: 0; color: var(--text-main); }
+    
+    .container { max-width: 900px; margin: 0 auto; background: var(--card-bg); padding: 30px; border-radius: 16px; box-shadow: var(--shadow-lg); border: 1px solid #e2e8f0;}
+    h2 { text-align: center; margin-top: 0; margin-bottom: 25px; font-size: 26px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px;}
+    
+    /* Professional Tabs System */
+    .tab-container { display: flex; gap: 15px; justify-content: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 2px solid #e2e8f0; }
+    .tab-btn { padding: 12px 28px; font-size: 15px; font-weight: 700; border: none; background: #f8fafc; color: var(--text-muted); border-radius: 10px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; gap: 8px;}
+    .tab-btn:hover { background: #e2e8f0; color: var(--text-main); }
+    .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); transform: translateY(-2px); }
+    
+    /* Search Box Wrapper */
+    .search-wrapper { position: relative; max-width: 650px; margin: 0 auto 30px auto; display: flex; flex-direction: column; gap: 12px; }
+    .search-input-group { display: flex; gap: 10px; width: 100%; position: relative;}
+    
+    input[type="text"] { flex: 1; padding: 15px 20px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 16px; outline: none; transition: all 0.2s; background: #f8fafc; font-weight: 500; width: 100%;}
+    input[type="text"]:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+    
+    .btn-search { background: var(--primary); color: white; border: none; padding: 15px 28px; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: 0.2s; box-shadow: var(--shadow-sm);}
+    .btn-search:hover { background: var(--primary-hover); transform: translateY(-1px);}
+    .btn-search:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none;}
+    
+    /* Dropdown UI */
+    .dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--border-color); border-radius: 10px; box-shadow: var(--shadow-lg); z-index: 100; display: none; flex-direction: column; max-height: 400px; margin-top: 8px; overflow: hidden;}
+    .dropdown-header { padding: 14px 18px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;}
+    .dropdown-list { overflow-y: auto; flex: 1; }
+    
+    .dropdown-item-single { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 4px; cursor: pointer; transition: 0.2s;}
+    .dropdown-item-single:hover { background: #eff6ff; padding-left: 22px; }
+    
+    .dropdown-item-bulk { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; margin: 0;}
+    .dropdown-item-bulk:hover { background: #f8fafc; }
+    
+    .item-checkbox { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0;}
+    .item-content { flex: 1; min-width: 0; }
+    .item-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; font-weight: 700; font-size: 14px; color: #334155;}
+    .item-name { white-space: normal; word-break: break-word; line-height: 1.4; }
+    .item-barcode { font-size: 12px; color: var(--primary); background: #eff6ff; padding: 4px 10px; border-radius: 6px; font-weight: 800; flex-shrink: 0;}
+    
+    .btn-small { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color); background: white; cursor: pointer; font-size: 13px; font-weight: 700; transition: 0.2s; color: #475569;}
+    .btn-small:hover { background: #f1f5f9; color: #0f172a;}
+    .btn-primary-small { background: var(--primary); color: white; border: none; }
+    .btn-primary-small:hover { background: var(--primary-hover); color: white;}
+    
+    /* Tags and Bulk Actions */
+    .bulk-action-row { display: none; justify-content: space-between; align-items: flex-start; width: 100%; min-height: 35px; margin-bottom: 5px; flex-wrap: wrap; gap: 10px;}
+    .selected-tags { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; min-width: 200px;}
+    .tag { background: #eff6ff; color: var(--primary); padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; border: 1px solid #bfdbfe; box-shadow: var(--shadow-sm); max-width: 100%;}
+    .tag span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px; }
+    .tag-close { cursor: pointer; color: var(--danger); font-size: 18px; line-height: 1; padding: 0 4px; border-radius: 50%; transition: 0.2s;}
+    .tag-close:hover { background: #fee2e2; }
+    
+    .bulk-buttons-box { display: none; gap: 10px; align-items: flex-end; flex-shrink: 0; }
+    .btn-clear { color: var(--danger); border-color: #fecaca; background: #fff1f2; white-space: nowrap; margin: 0;}
+    .btn-clear:hover { background: #fecdd3; color: #be123c;}
+    
+    /* Loading Spinner */
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite; margin-right: 6px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg-color); padding: 15px; margin: 0; color: var(--text-main); }
+    /* Result Card */
+    .result-card { display: none; background: #ffffff; border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; margin-bottom: 20px; box-shadow: var(--shadow-md); animation: fadeIn 0.4s ease-out;}
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     
-    .container { max-width: 900px; margin: 0 auto; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); box-sizing: border-box;}
-    h2 { color: var(--text-main); text-align: center; margin-top: 0; margin-bottom: 25px; font-size: 24px; font-weight: 700; }
+    .product-title { font-size: 22px; font-weight: 800; margin-bottom: 20px; color: #0f172a; display: block; word-break: break-word;}
+    .price-info { display: flex; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; }
+    .price-badge { background: #f8fafc; padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 14px; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; color: #334155; flex: 1; min-width: 120px; justify-content: center;}
     
-    .search-wrapper { position: relative; max-width: 500px; margin: 0 auto 30px auto; display: flex; flex-direction: column; gap: 10px; }
-    .search-input-group { display: flex; gap: 10px; width: 100%; }
+    /* Professional Table */
+    .table-container { overflow-x: auto; border: 1px solid var(--border-color); border-radius: 10px; border-bottom: none; width: 100%;}
+    table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 500px;}
+    th, td { padding: 16px 20px; text-align: center; border-bottom: 1px solid var(--border-color); font-size: 15px; }
+    th { background-color: #f8fafc; font-size: 13px; text-align: left; text-transform: uppercase; font-weight: 800; color: #475569; letter-spacing: 0.5px;}
+    td.store-name { text-align: left; font-weight: 600; color: #334155;}
     
-    input[type="text"] { flex: 1; padding: 14px 18px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 16px; outline: none; transition: all 0.3s; box-sizing: border-box; width: 100%;}
-    input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-    
-    .btn-search { background: var(--primary); color: white; border: none; padding: 14px 24px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s; white-space: nowrap;}
-    .btn-search:hover { background: var(--primary-hover); }
-    .btn-search:disabled { background: #94a3b8; cursor: not-allowed; }
-    
-    .dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 100; max-height: 300px; overflow-y: auto; display: none; margin-top: 5px;}
-    .dropdown-item { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; flex-direction: column; gap: 4px; transition: background 0.2s;}
-    .dropdown-item:last-child { border-bottom: none; }
-    .dropdown-item:hover { background: #f8fafc; }
-    
-    .item-top { display: flex; justify-content: space-between; align-items: flex-start; }
-    .item-name { font-weight: 600; font-size: 14px; color: var(--text-main); line-height: 1.4; }
-    .item-barcode { font-size: 12px; font-weight: 600; color: var(--primary); background: #eff6ff; padding: 3px 8px; border-radius: 4px; white-space: nowrap; margin-left: 10px;}
-    .item-price { font-size: 12px; color: var(--text-muted); font-weight: 500; }
-    
-    .dropdown-loading { padding: 15px; text-align: center; color: var(--text-muted); font-size: 14px; font-style: italic;}
-
-    .error { display: none; text-align: center; color: var(--danger); background: #fef2f2; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 15px; margin-bottom: 20px; border: 1px solid #fecaca;}
-    
-    .result-card { display: none; background: #ffffff; border: 1px solid var(--border-color); border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);}
-    .product-title { font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 15px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block;}
-    .price-info { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-    .price-badge { background: #f1f5f9; padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 14px; color: var(--text-main); border: 1px solid var(--border-color); display: flex; align-items: center; gap: 6px;}
-    .badge-label { color: var(--text-muted); font-weight: 500;}
-
-    .table-container { width: 100%; overflow-x: auto; border-radius: 8px; border: 1px solid var(--border-color); }
-    table { width: 100%; border-collapse: collapse; background: white; min-width: 500px;}
-    th, td { padding: 14px 16px; text-align: center; border-bottom: 1px solid var(--border-color); font-size: 15px; }
-    th { background-color: #f8fafc; color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; text-align: left;}
-    td.store-name { text-align: left; font-weight: 500; color: var(--text-main); }
-    tr:last-child td { border-bottom: none; }
-    tr:hover { background-color: #f8fafc; }
-    
-    .stock-qty { font-weight: 700; font-size: 16px; color: var(--success); }
+    .stock-qty { font-weight: 800; color: var(--success); font-size: 16px;}
     .stock-zero { color: var(--danger); }
-    .stock-loading { color: var(--warning); font-style: italic; font-size: 14px; }
-    .total-row td { background-color: #f1f5f9; font-weight: 700; font-size: 16px; color: var(--text-main); border-top: 2px solid var(--border-color);}
-    .total-qty { color: var(--primary); font-size: 20px; }
+    .stock-loading { color: var(--warning); font-style: italic; font-weight: 600;}
+    
+    .total-row td { background-color: #f8fafc; font-weight: 800; font-size: 16px; border-top: 2px solid #cbd5e1; color: #0f172a;}
+    .total-qty { color: var(--primary); font-size: 22px !important; }
 
-    @media (max-width: 600px) {
-      .container { padding: 15px; }
-      .search-input-group { flex-direction: column; }
-      .btn-search { width: 100%; }
-      th, td { padding: 10px 12px; font-size: 14px; }
-      .product-title { font-size: 18px; }
+    /* ==============================================================
+       MOBILE RESPONSIVE DESIGN (Media Queries)
+       ============================================================== */
+    @media (max-width: 640px) {
+      body { padding: 10px; }
+      .container { padding: 20px 15px; border-radius: 12px; }
+      h2 { font-size: 22px; margin-bottom: 20px; }
+      
+      /* Tabs adjusting to fit mobile */
+      .tab-container { gap: 10px; padding-bottom: 15px; margin-bottom: 20px; }
+      .tab-btn { padding: 10px; font-size: 14px; flex: 1; }
+      
+      /* Search Input & Button Stacking */
+      .search-input-group { flex-direction: column; gap: 10px; }
+      .btn-search { width: 100%; padding: 14px; }
+      input[type="text"] { padding: 14px 15px; font-size: 15px; }
+      
+      /* Bulk Actions Adjustments */
+      .bulk-action-row { flex-direction: column; align-items: stretch; }
+      .bulk-buttons-box { width: 100%; justify-content: space-between; padding-top: 10px;}
+      .bulk-buttons-box button { flex: 1; text-align: center; justify-content: center; display: flex;}
+      
+      /* Result Card Adjustments */
+      .result-card { padding: 15px; }
+      .product-title { font-size: 18px; margin-bottom: 15px; }
+      .price-info { flex-direction: column; gap: 8px; margin-bottom: 15px; }
+      .price-badge { width: 100%; justify-content: space-between; padding: 10px 15px; }
+      
+      /* Table adjustments */
+      th, td { padding: 12px 10px; font-size: 14px; }
+      .total-row td { font-size: 14px; }
+      .total-qty { font-size: 18px !important; }
     }
   </style>
 </head>
@@ -82,25 +138,53 @@
   <div class="container">
     <h2>Global Live Stock Checker</h2>
     
+    <div class="tab-container">
+      <button id="tabSingle" class="tab-btn active" onclick="setMode('single')">
+        🔍 Single Check
+      </button>
+      <button id="tabBulk" class="tab-btn" onclick="setMode('bulk')">
+        📦 Bulk Check
+      </button>
+    </div>
+    
     <div class="search-wrapper">
-      <div class="search-input-group">
-        <input type="text" id="searchInput" placeholder="Search by Product Name or Barcode..." autocomplete="off">
-        <button id="searchBtn" class="btn-search" onclick="startStockCheck()">Check Stock</button>
+      
+      <div id="bulkActionRow" class="bulk-action-row">
+        <div id="selectedTags" class="selected-tags"></div>
+        <div id="bulkButtonsBox" class="bulk-buttons-box">
+          <button id="clearAllBtn" class="btn-small btn-clear" onclick="clearAllProducts()">Clear All</button>
+          <button id="checkSelectedBtn" class="btn-small btn-primary-small" style="padding: 8px 16px;" onclick="startStockCheck()">Check Selected</button>
+        </div>
       </div>
+
+      <div class="search-input-group">
+        <input type="text" id="searchInput" placeholder="Enter Product Name or Barcode (Single)..." autocomplete="off">
+        <button id="searchBtn" class="btn-search" onclick="handleSearchBtnClick()">Check Stock</button>
+      </div>
+      
       <div id="searchDropdown" class="dropdown"></div>
     </div>
 
-    <div id="errorMsg" class="error"></div>
-
     <div id="resultCard" class="result-card">
       <div class="product-title" id="productName">Searching...</div>
-      <div class="price-info">
-        <div class="price-badge"><span class="badge-label">Barcode:</span> <span id="lblBarcode">...</span></div>
-        <div class="price-badge"><span class="badge-label">CPU:</span> <span id="lblCPU">...</span></div>
-        <div class="price-badge"><span class="badge-label">MRP:</span> <span id="lblMRP">...</span></div>
+      <div class="price-info" id="priceInfoContainer">
+        <div class="price-badge" id="barcodeBadge"><span style="color:var(--text-muted)">Barcode:</span> <span id="lblBarcode">...</span></div>
+        <div class="price-badge" id="cpuBadge"><span style="color:var(--text-muted)">CPU:</span> <span id="lblCPU">...</span></div>
+        <div class="price-badge" id="mrpBadge"><span style="color:var(--text-muted)">MRP:</span> <span id="lblMRP">...</span></div>
       </div>
       
-      <div class="table-container">
+      <div id="bulkTotalsCard" style="display: none; background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 12px; padding: 25px; text-align: center; gap: 20px; flex-wrap: wrap; justify-content: space-around; margin-top: 10px;">
+         <div style="font-size: 16px; font-weight: 800; color: #475569; display: flex; flex-direction: column; align-items: center;">
+            LAST PURCHASE
+            <span id="bulkLastPurQty" style="color: var(--primary); font-size: 32px; font-weight: 900; margin-top: 8px;">0</span>
+         </div>
+         <div style="font-size: 16px; font-weight: 800; color: #475569; display: flex; flex-direction: column; align-items: center;">
+            TOTAL GLOBAL STOCK
+            <span id="bulkTotalStockQty" style="color: var(--success); font-size: 32px; font-weight: 900; margin-top: 8px;">0</span>
+         </div>
+      </div>
+
+      <div class="table-container" id="storeTableContainer">
         <table>
           <thead>
             <tr>
@@ -108,13 +192,12 @@
               <th style="text-align: center;">Available Stock</th>
             </tr>
           </thead>
-          <tbody id="stockTableBody">
-          </tbody>
+          <tbody id="stockTableBody"></tbody>
           <tfoot>
             <tr class="total-row">
               <td style="text-align: right; position: relative;">
-                <span style="position: absolute; left: 16px; color: var(--text-muted); font-size: 14px;">
-                  Last Purchase: <span id="lastPurQty" style="color: var(--primary); font-size: 16px;">0</span> pcs
+                <span style="position: absolute; left: 15px; color: var(--text-muted); font-size: 13px; top: 50%; transform: translateY(-50%);">
+                  Last Purchase: <span id="lastPurQty" style="color: var(--primary); font-size: 15px;">0</span> pcs
                 </span>
                 TOTAL GLOBAL STOCK :
               </td>
@@ -127,8 +210,8 @@
   </div>
 
   <script>
-    // ⚠️ Ekhane apnar Node.js Server er link hobe. Render e live korle localhost er bodole shei link diben
-    const BACKEND_URL = "https://global-stock-five.vercel.app"; 
+    // ⚠️ Ekhane apnar Apps Script er Deployment Link boshaben ⚠️
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzSBmvEFfpXyEkppQgCaGHdeGHCoveJpVfAr1c7mGSvyFK8m4h54SLLLpGdzAx-JVuo/exec"; 
 
     const stores = [
       {code: "100010001", name: "PFF PREMIUM_WH"},
@@ -138,69 +221,106 @@
       {code: "100010006", name: "PFF (SS), Uttara"}
     ];
 
+    let currentMode = 'single'; 
+    let selectedProducts = [];
+    let searchTimeout = null;
+    
     const searchInput = document.getElementById("searchInput");
     const dropdown = document.getElementById("searchDropdown");
-    let searchTimeout = null;
 
+    // ================== MODE SWITCHING ==================
+    function setMode(mode) {
+      currentMode = mode;
+      
+      document.getElementById('tabSingle').classList.toggle('active', mode === 'single');
+      document.getElementById('tabBulk').classList.toggle('active', mode === 'bulk');
+      
+      clearAllProducts();
+      dropdown.style.display = "none";
+      document.getElementById('resultCard').style.display = 'none';
+      searchInput.value = "";
+      
+      const searchBtn = document.getElementById('searchBtn');
+
+      if (mode === 'single') {
+        searchInput.placeholder = "Enter Product Name or Barcode (Single)...";
+        document.getElementById('bulkActionRow').style.display = 'none';
+        searchBtn.style.display = 'block'; 
+        document.getElementById('storeTableContainer').style.display = 'block';
+        document.getElementById('bulkTotalsCard').style.display = 'none';
+      } else {
+        searchInput.placeholder = "🔍 Search multiple products...";
+        document.getElementById('bulkActionRow').style.display = 'flex';
+        searchBtn.style.display = 'none'; 
+        document.getElementById('storeTableContainer').style.display = 'none';
+        document.getElementById('bulkTotalsCard').style.display = 'flex';
+      }
+    }
+
+    // ================== SEARCH & DROPDOWN ==================
     searchInput.addEventListener("input", function() {
       const term = this.value.trim();
       dropdown.style.display = "none";
-      
       if (term.length < 3) return; 
       
       clearTimeout(searchTimeout);
-      dropdown.style.display = "block";
-      dropdown.innerHTML = '<div class="dropdown-loading">Searching products...</div>';
+      dropdown.style.display = "flex";
+      dropdown.innerHTML = '<div style="padding:18px;text-align:center;color:#64748b;font-weight:600;">Searching Server...</div>';
 
       searchTimeout = setTimeout(() => {
-        fetchProductsFromBackend(term);
+        fetch(`${GAS_URL}`, {
+          method: 'POST',
+          body: JSON.stringify({ action: "search", term: term })
+        })
+        .then(res => res.json())
+        .then(json => {
+          if (json.ProductList && json.ProductList.length > 0) {
+            let html = '';
+            
+            if (currentMode === 'bulk') {
+                html += `
+                  <div class="dropdown-header" style="justify-content: center; padding: 10px;">
+                    <button type="button" class="btn-small" onclick="selectAll()" style="width: 100%; font-size: 14px; padding: 10px;">Select All Products</button>
+                  </div>
+                `;
+            }
+            
+            html += `<div class="dropdown-list">`;
+            
+            json.ProductList.forEach(p => {
+              const barcode = p.BARCODE || p.SKU;
+              const name = p.DISPLAY_NAME || p.FULL_NAME;
+              const price = p.MRP || 0;
+              
+              if (currentMode === 'single') {
+                  html += `
+                    <div class="dropdown-item-single" onclick="executeSingleCheck('${barcode}', '${name.replace(/'/g, "\\'")}')">
+                      <div class="item-top"><span class="item-name">${name}</span><span class="item-barcode">${barcode}</span></div>
+                      <div style="font-size:12px;color:#64748b;font-weight:600;margin-top:4px;">MRP: ${price}</div>
+                    </div>
+                  `;
+              } else {
+                  const isChecked = selectedProducts.some(sp => sp.barcode === String(barcode)) ? 'checked' : '';
+                  html += `
+                    <label class="dropdown-item-bulk">
+                      <input type="checkbox" class="item-checkbox" value="${barcode}" data-name="${name}" ${isChecked} onchange="toggleSelect(this)">
+                      <div class="item-content">
+                        <div class="item-top"><span class="item-name">${name}</span><span class="item-barcode">${barcode}</span></div>
+                        <div style="font-size:12px;color:#64748b;font-weight:600;margin-top:4px;">MRP: ${price}</div>
+                      </div>
+                    </label>
+                  `;
+              }
+            });
+            dropdown.innerHTML = html + "</div>";
+          } else {
+            dropdown.innerHTML = '<div style="padding:18px;text-align:center;color:#e11d48;font-weight:600;">No products found</div>';
+          }
+        }).catch(err => {
+            dropdown.innerHTML = '<div style="padding:18px;text-align:center;color:#e11d48;font-weight:600;">Server Error! Check Link.</div>';
+        });
       }, 500); 
     });
-
-    async function fetchProductsFromBackend(term) {
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/search`, {
-          method: 'POST',
-          headers: {
-            "content-type": "application/json"
-          },
-          body: JSON.stringify({ term: term })
-        });
-
-        if (!response.ok) throw new Error("Backend Error");
-        
-        const json = await response.json();
-        
-        if (json.ProductList && json.ProductList.length > 0) {
-          dropdown.innerHTML = "";
-          json.ProductList.forEach(p => {
-            const barcode = String(p.BARCODE || p.SKU || "");
-            const name = p.DISPLAY_NAME || p.FULL_NAME || p.BRAND_NAME || "Unknown";
-            const price = p.MRP || 0;
-
-            const div = document.createElement("div");
-            div.className = "dropdown-item";
-            div.innerHTML = `
-              <div class="item-top">
-                <span class="item-name">${name}</span>
-                <span class="item-barcode">${barcode}</span>
-              </div>
-              <span class="item-price">MRP: ${price}</span>
-            `;
-            div.onclick = () => {
-              searchInput.value = barcode;
-              dropdown.style.display = "none";
-              startStockCheck(); 
-            };
-            dropdown.appendChild(div);
-          });
-        } else {
-          dropdown.innerHTML = '<div class="dropdown-loading">No products found</div>';
-        }
-      } catch (err) {
-        dropdown.innerHTML = '<div class="dropdown-loading">Error fetching results</div>';
-      }
-    }
 
     document.addEventListener("click", function(e) {
       if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
@@ -211,108 +331,210 @@
     searchInput.addEventListener("keypress", function(event) {
       if (event.key === "Enter") {
         event.preventDefault();
-        dropdown.style.display = "none";
-        startStockCheck();
+        handleSearchBtnClick();
       }
     });
 
-    async function startStockCheck() {
-      const barcode = searchInput.value.trim();
-      if (!barcode) {
-        showError("Please enter a valid barcode or select a product!");
-        return;
-      }
-
-      document.getElementById('errorMsg').style.display = 'none';
-      document.getElementById('searchBtn').disabled = true;
-      document.getElementById('searchBtn').innerText = "Checking...";
-      
-      document.getElementById('productName').innerText = "Fetching Product Info...";
-      document.getElementById('lblBarcode').innerText = barcode;
-      document.getElementById('lblCPU').innerText = "...";
-      document.getElementById('lblMRP').innerText = "...";
-      document.getElementById('totalStockQty').innerText = "0";
-      document.getElementById('lastPurQty').innerText = "...";
-
-      const tbody = document.getElementById('stockTableBody');
-      tbody.innerHTML = '';
-      
-      stores.forEach((store, index) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="store-name">${store.name}</td>
-          <td id="qty-${index}" class="stock-loading">Fetching Data...</td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-     document.getElementById('resultCard').style.display = 'block';
-
-      let totalQty = 0;
-      let infoFound = false;
-
-      // Fetch Last Purchase QTY
-      try {
-        const lpResponse = await fetch(`${BACKEND_URL}/api/last-purchase/${encodeURIComponent(barcode)}`);
-        if (lpResponse.ok) {
-          const lpData = await lpResponse.json();
-          if (lpData && lpData.length > 0) {
-            document.getElementById('lastPurQty').innerText = lpData[0].LAST_PUR_QTY || 0;
-          } else {
-            document.getElementById('lastPurQty').innerText = "0";
-          }
-        }
-      } catch (err) {
-        document.getElementById('lastPurQty').innerText = "Error";
-      }
-
-      for (let i = 0; i < stores.length; i++) {
-        try {
-          const fetchUrl = `${BACKEND_URL}/api/stock/${stores[i].code}/${encodeURIComponent(barcode)}`;
-          
-          const response = await fetch(fetchUrl);
-
-          if (!response.ok) throw new Error(`HTTP Error`);
-
-          const data = await response.json();
-          const qtyCell = document.getElementById(`qty-${i}`);
-          
-          if (data && data.length > 0) {
-            const item = data[0];
-            const qty = item.SAL_BAL_QTY || item.BAL_QTY || item.QTY || 0;
-            
-            if (!infoFound) {
-              document.getElementById('productName').innerText = item.DISPLAY_NAME || item.PRD_INV_NAME || item.BRAND_NAME || item.SUB_CATEGORY_NAME || "Unknown Product";
-              document.getElementById('lblCPU').innerText = item.SAL_CPU || item.CPU || item.LAST_PUR_PRICE || 0;
-              document.getElementById('lblMRP').innerText = item.SAL_PRICE || item.MRP || 0;
-              infoFound = true;
-            }
-            
-            totalQty += qty;
-            document.getElementById('totalStockQty').innerText = totalQty;
-            
-            qtyCell.innerText = qty;
-            qtyCell.className = qty > 0 ? 'stock-qty' : 'stock-qty stock-zero';
-          } else {
-            qtyCell.innerText = "0";
-            qtyCell.className = 'stock-zero';
-          }
-        } catch (error) {
-          document.getElementById(`qty-${i}`).innerText = "Fetch Failed";
-          document.getElementById(`qty-${i}`).className = 'stock-zero';
-        }
-      }
-
-      if (!infoFound) document.getElementById('productName').innerText = "Product Not Found";
-
-      document.getElementById('searchBtn').disabled = false;
-      document.getElementById('searchBtn').innerText = "Check Stock";
+    // ================== SINGLE MODE LOGIC ==================
+    function executeSingleCheck(barcode, name) {
+        dropdown.style.display = "none";
+        searchInput.value = "";
+        selectedProducts = [{ barcode: barcode, name: name }]; 
+        startStockCheck();
     }
 
-    function showError(msg) {
-      const errDiv = document.getElementById('errorMsg');
-      errDiv.innerText = msg;
-      errDiv.style.display = 'block';
+    // ================== BULK MODE LOGIC ==================
+    function toggleSelect(cb) {
+      if (cb.checked) {
+        if (!selectedProducts.find(p => p.barcode === cb.value)) selectedProducts.push({barcode: cb.value, name: cb.getAttribute('data-name')});
+      } else {
+        selectedProducts = selectedProducts.filter(p => p.barcode !== cb.value);
+      }
+      renderTags();
+    }
+
+    function selectAll() {
+      document.querySelectorAll('.item-checkbox').forEach(cb => {
+        if (!cb.checked) { cb.checked = true; toggleSelect(cb); }
+      });
+    }
+
+    function closeAndCheck() {
+      dropdown.style.display = "none";
+      searchInput.value = "";
+      if(selectedProducts.length > 0) startStockCheck();
+    }
+
+    function removeTag(barcode) {
+      selectedProducts = selectedProducts.filter(p => p.barcode !== barcode);
+      renderTags();
+      const cb = document.querySelector(`input.item-checkbox[value="${barcode}"]`);
+      if(cb) cb.checked = false;
+      
+      if (selectedProducts.length > 0) {
+          startStockCheck();
+      } else {
+          document.getElementById('resultCard').style.display = 'none';
+      }
+    }
+
+    function renderTags() {
+      const container = document.getElementById("selectedTags");
+      
+      // Tag er bodole ekhon shudhu Comma (,) diye plain text e dekhabe
+      if (selectedProducts.length > 0) {
+        const namesList = selectedProducts.map(p => p.name).join(', ');
+        container.innerHTML = `
+          <div style="font-size: 14px; color: var(--primary); font-weight: 700; line-height: 1.6; word-break: break-word;">
+            Selected (${selectedProducts.length}): <span style="color: var(--text-muted); font-weight: 500;">${namesList}</span>
+          </div>`;
+      } else {
+        container.innerHTML = '';
+      }
+      
+      const bulkButtonsBox = document.getElementById("bulkButtonsBox");
+      if (bulkButtonsBox) {
+        bulkButtonsBox.style.display = selectedProducts.length > 0 ? 'flex' : 'none';
+      }
+    }
+
+    function clearAllProducts() {
+      selectedProducts = [];
+      renderTags();
+      document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = false);
+      document.getElementById('resultCard').style.display = 'none';
+      document.getElementById('searchInput').value = "";
+    }
+
+    // ================== SHARED BUTTON / ENTER LOGIC ==================
+    function handleSearchBtnClick() {
+      const val = searchInput.value.trim();
+      dropdown.style.display = "none"; 
+      
+      if (!val) {
+          if (selectedProducts.length > 0 && currentMode === 'bulk') startStockCheck();
+          return;
+      }
+
+      if (currentMode === 'single') {
+          executeSingleCheck(val, "Scanned Item");
+      } else {
+          if (!selectedProducts.find(p => p.barcode === val)) {
+             selectedProducts.push({ barcode: val, name: "Scanned Item" });
+             renderTags();
+          }
+          searchInput.value = "";
+          startStockCheck();
+      }
+    }
+
+    // ================== API FETCHING ==================
+    async function startStockCheck() {
+      if(selectedProducts.length === 0) return;
+
+      if(currentMode === 'single') {
+         document.getElementById('searchBtn').disabled = true;
+         document.getElementById('searchBtn').innerText = "Fetching Data...";
+      } else {
+         document.getElementById('checkSelectedBtn').disabled = true;
+         // Button er bhetor Loading spinner add kora holo
+         document.getElementById('checkSelectedBtn').innerHTML = `<span class="spinner"></span> Loading...`;
+         
+         // Bulk Mode e Sum er jaygay Loading text add kora holo
+         document.getElementById('bulkLastPurQty').innerHTML = `<span style="font-size: 16px; color: var(--text-muted); font-weight: 600;">Loading...</span>`;
+         document.getElementById('bulkTotalStockQty').innerHTML = `<span style="font-size: 16px; color: var(--text-muted); font-weight: 600;">Loading...</span>`;
+      }
+      
+      const isMulti = selectedProducts.length > 1;
+      
+      if (isMulti) {
+          document.getElementById('productName').innerText = `${selectedProducts.length} Products Selected`;
+          document.getElementById('lblBarcode').innerText = "Multiple";
+          document.getElementById('barcodeBadge').style.display = 'none';
+          document.getElementById('cpuBadge').style.display = 'none';
+          document.getElementById('mrpBadge').style.display = 'none';
+      } else {
+          document.getElementById('productName').innerText = selectedProducts[0].name;
+          document.getElementById('lblBarcode').innerText = selectedProducts[0].barcode;
+          document.getElementById('barcodeBadge').style.display = 'flex';
+          document.getElementById('cpuBadge').style.display = 'flex';
+          document.getElementById('mrpBadge').style.display = 'flex';
+      }
+      
+      document.getElementById('lblCPU').innerText = "...";
+      document.getElementById('lblMRP').innerText = "...";
+
+      const tbody = document.getElementById('stockTableBody');
+      tbody.innerHTML = stores.map((s, i) => `<tr><td class="store-name">${s.name}</td><td id="qty-${i}" class="stock-loading">Loading...</td></tr>`).join('');
+      document.getElementById('resultCard').style.display = 'block';
+
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: "check_bulk",
+            barcodes: selectedProducts.map(p => p.barcode),
+            stores: stores.map(s => s.code)
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.success && data.results) {
+          let grandTotalPurchase = 0;
+          let grandTotalStock = 0;
+          let storeTotals = new Array(stores.length).fill(0);
+
+          selectedProducts.forEach(product => {
+             const res = data.results[product.barcode];
+             if (res) {
+               grandTotalPurchase += res.lastPurchase;
+               stores.forEach((store, i) => {
+                 const qty = res.stockByStore[store.code] || 0;
+                 storeTotals[i] += qty;
+                 grandTotalStock += qty;
+               });
+
+               if (!isMulti) {
+                  document.getElementById('lblCPU').innerText = res.cpu || 0;
+                  document.getElementById('lblMRP').innerText = res.mrp || 0;
+                  if (res.name && document.getElementById('productName').innerText === "Scanned Item") {
+                     document.getElementById('productName').innerText = res.name;
+                  }
+               }
+             }
+          });
+
+          // Update Single Mode Table Totals
+          document.getElementById('lastPurQty').innerText = grandTotalPurchase;
+          document.getElementById('totalStockQty').innerText = grandTotalStock;
+          
+          // Update Bulk Mode Card Totals (Identical Size & Style)
+          document.getElementById('bulkLastPurQty').innerText = grandTotalPurchase;
+          document.getElementById('bulkTotalStockQty').innerText = grandTotalStock;
+          
+          storeTotals.forEach((total, i) => {
+            const cell = document.getElementById(`qty-${i}`);
+            cell.innerText = total;
+            cell.className = total > 0 ? 'stock-qty' : 'stock-qty stock-zero';
+          });
+        }
+      } catch (error) {
+        alert("Server Error: Please check your Internet or Apps Script link.");
+        if (currentMode === 'bulk') {
+           document.getElementById('bulkLastPurQty').innerText = "Error";
+           document.getElementById('bulkTotalStockQty').innerText = "Error";
+        }
+      }
+
+      if(currentMode === 'single') {
+         document.getElementById('searchBtn').disabled = false;
+         document.getElementById('searchBtn').innerText = "Check Stock";
+      } else {
+         document.getElementById('checkSelectedBtn').disabled = false;
+         // Kaj sheshe abar ager "Check Selected" text e fire ashbe (spinner chole jabe)
+         document.getElementById('checkSelectedBtn').innerText = "Check Selected";
+      }
     }
   </script>
 </body>
