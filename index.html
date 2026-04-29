@@ -16,7 +16,7 @@
     }
     
     * { box-sizing: border-box; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-color); padding: 20px 15px; margin: 0; color: var(--text-main); }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-color); padding: 20px 15px; margin: 0; color: var(--text-main); zoom: 80%; }
     
     .container { max-width: 900px; margin: 0 auto; background: var(--card-bg); padding: 30px; border-radius: 16px; box-shadow: var(--shadow-lg); border: 1px solid #e2e8f0;}
     h2 { text-align: center; margin-top: 0; margin-bottom: 25px; font-size: 26px; font-weight: 800; color: #1e293b; letter-spacing: -0.5px;}
@@ -210,8 +210,7 @@
   </div>
 
   <script>
-    // ⚠️ Ekhane apnar Apps Script er Deployment Link boshaben ⚠️
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzSBmvEFfpXyEkppQgCaGHdeGHCoveJpVfAr1c7mGSvyFK8m4h54SLLLpGdzAx-JVuo/exec"; 
+    const GAS_URL = "https://global-stock-backend2.onrender.com/api"; 
 
     const stores = [
       {code: "100010001", name: "PFF PREMIUM_WH"},
@@ -270,6 +269,9 @@
       searchTimeout = setTimeout(() => {
         fetch(`${GAS_URL}`, {
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({ action: "search", term: term })
         })
         .then(res => res.json())
@@ -471,6 +473,9 @@
       try {
         const response = await fetch(GAS_URL, {
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({
             action: "check_bulk",
             barcodes: selectedProducts.map(p => p.barcode),
